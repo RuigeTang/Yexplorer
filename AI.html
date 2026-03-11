@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI助手 - 海大文旅</title>
+    <link rel="stylesheet" href="/Yexplorer/css/style.css">
+    <link rel="stylesheet" href="/Yexplorer/css/AI.css">
+    <style>
+        /* 背景图样式 - 确保不被覆盖，优先级正确 */
+        body {
+            position: relative;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* 注意：如果你的背景图路径不是这个，需要确认是否正确 */
+            background: url(images/background_AI.jpg) no-repeat center center;
+            background-size: cover;
+            opacity: 0.2; /* 20%透明度，保留你的原始设置 */
+            z-index: -1; /* 放在最底层，不会被任何元素覆盖 */
+            pointer-events: none;
+            display: block;
+        }
+
+        /* AI功能快捷指引栏样式 */
+        .ai-guide-tabs {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            border: 1px solid #f0f0f0;
+        }
+
+        .ai-guide-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ai-guide-title::before {
+            content: "💡";
+            font-size: 18px;
+        }
+
+        .ai-guide-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .ai-guide-item {
+            padding: 8px 14px;
+            background: #f7f9fa;
+            border: 1px solid #e6e8eb;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+
+        .ai-guide-item:hover {
+            background: #e8f4ff;
+            border-color: #0088ff;
+            color: #0077dd;
+            transform: translateY(-2px);
+        }
+
+        .ai-guide-item:active {
+            transform: translateY(0);
+        }
+
+        /* 底部快捷导航卡片样式 */
+        .quick-nav-section {
+            margin: 40px 0;
+            padding: 0 20px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .quick-nav-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .quick-nav-title::after {
+            content: "";
+            display: block;
+            width: 60px;
+            height: 3px;
+            background-color: #0088ff;
+            margin: 8px auto 0;
+            border-radius: 3px;
+        }
+
+        .quick-nav-wrapper {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .quick-nav-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 180px;
+            height: 160px;
+            background-color: #ffffff;
+            border: 2px solid #e6e6e6;
+            border-radius: 16px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+        }
+
+        .quick-nav-card:hover {
+            transform: translateY(-8px);
+            border-color: #0088ff;
+            background-color: #f5fbff;
+            box-shadow: 0 8px 20px rgba(0, 136, 255, 0.15);
+            color: #0088ff;
+        }
+
+        .quick-nav-card .card-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+            color: #0088ff;
+        }
+
+        .quick-nav-card .card-text {
+            font-size: 16px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .ai-guide-list {
+                gap: 8px;
+            }
+            .ai-guide-item {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+            .quick-nav-wrapper {
+                gap: 18px;
+            }
+            .quick-nav-card {
+                width: 140px;
+                height: 130px;
+            }
+            .quick-nav-card .card-icon {
+                font-size: 30px;
+            }
+            .quick-nav-card .card-text {
+                font-size: 15px;
+            }
+        }
+
+        .timeline-details {
+            flex-wrap: wrap !important;
+        }
+
+        /* 加载中动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 关键修改1：聊天窗口固定高度+滚动 */
+        #chat-window {
+            background: transparent;
+            padding: 20px;
+            /* 固定高度，可根据需要调整 */
+            height: 400px;
+            max-height: 400px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            /* 超出内容滚动 */
+            overflow-y: auto;
+            /* 优化滚动体验 */
+            scroll-behavior: smooth;
+            /* 防止内容溢出 */
+            box-sizing: border-box;
+        }
+
+        /* 滚动条美化（可选） */
+        #chat-window::-webkit-scrollbar {
+            width: 6px;
+        }
+        #chat-window::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        #chat-window::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+        #chat-window::-webkit-scrollbar-thumb:hover {
+            background: #0088ff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="main-nav">
+            <div class="logo">
+                <img src="/Yexplorer/images/logo.png" alt="中国海洋大学">
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/Yexplorer/index.html">首页</a></li>
+                <li><a href="/Yexplorer/map.html">地图指引</a></li>
+                <li><a href="/Yexplorer/AI.html" class="active">AI助手</a></li>
+                <li><a href="/Yexplorer/resources.html">相关资源</a></li>
+                <li><a href="/Yexplorer/contact.html">联系我们</a></li>
+            </ul>
+        </nav>
+    </header>
+
+<main class="story-page">
+    <h1 class="page-title">YExplorer</h1>
+    <style>
+    /* 缩小标题之间的间距 */
+    .page-title {
+      margin-bottom: 10px !important; /* 可根据需要调整数值，比如8px/12px */
+    }
+
+    .timeline h2 {
+      margin-top: 0 !important; /* 彻底去掉h2上方的默认间距 */
+    }
+  </style>
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <div class="timeline-date">了解更多</div>
+                <h2>YExplorer - 带你逛遍美丽海大</h2>
+
+                <div class="ai-guide-tabs">
+                    <div class="ai-guide-title">快捷指引</div>
+                    <div class="ai-guide-list">
+                        <div class="ai-guide-item" data-question="介绍一下海大校园景点">介绍海大校园景点</div>
+                        <div class="ai-guide-item" data-question="如何使用地图指引功能">地图指引使用说明</div>
+                        <div class="ai-guide-item" data-question="有哪些研学相关的学习资源">研学相关学习资源</div>
+                        <div class="ai-guide-item" data-question="如何联系你们">联系我们的方式</div>
+                        <div class="ai-guide-item" data-question="帮我写一段研学旅行文案">生成研学旅行文案</div>
+                        <div class="ai-guide-item" data-question="介绍研学路线规划">研学路线规划介绍</div>
+                    </div>
+                </div>
+                
+                <!-- 聊天窗口：移除内联样式，改用CSS类控制 -->
+                <div id="chat-window">
+                    <div style="margin: 8px 0; padding: 10px; background: #e8f4ff; border-radius: 6px; max-width: 80%; text-align: left;">
+                        <strong>研探：</strong>嗨～我是研探小导游，跟我一起探秘美丽的海大吧！
+                    </div>
+                </div>
+                
+                <div class="timeline-details" style="display: flex; gap: 10px; align-items: center;">
+                    <h3 style="margin: 0; flex-shrink: 0;">对话输入</h3>
+                    <input type="text" id="user-input" placeholder="请输入你想提问的内容..." style="flex: 1; min-width: 200px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;">
+                    <button id="send-btn" style="padding: 8px 16px; background: #0088ff; color: white; border: none; border-radius: 4px; cursor: pointer;">发送</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="quick-nav-section">
+        <h2 class="quick-nav-title">快捷导航</h2>
+        <div class="quick-nav-wrapper">
+            <a href="/Yexplorer/map.html" class="quick-nav-card">
+                <div class="card-icon">🗺️</div>
+                <div class="card-text">地图指引</div>
+            </a>
+            <a href="/Yexplorer/resources.html" class="quick-nav-card">
+                <div class="card-icon">📚</div>
+                <div class="card-text">相关资源</div>
+            </a>
+            <a href="/Yexplorer/contact.html" class="quick-nav-card">
+                <div class="card-icon">📞</div>
+                <div class="card-text">联系我们</div>
+            </a>
+        </div>
+    </section>
+</main>
+
+<script>
+// 获取页面元素
+const chatWindow = document.getElementById('chat-window');
+const userInput = document.getElementById('user-input');
+const sendBtn = document.getElementById('send-btn');
+const guideItems = document.querySelectorAll('.ai-guide-item');
+
+// 添加用户消息到聊天窗口
+function addUserMsg(text) {
+    const msg = document.createElement('div');
+    msg.style = "margin: 8px 0; padding: 10px; background: #f0f8fb; border-radius: 6px; max-width: 80%; margin-left: auto; text-align: right;";
+    msg.innerHTML = `<strong>你：</strong>${text}`;
+    chatWindow.appendChild(msg);
+    chatWindow.scrollTop = chatWindow.scrollHeight; // 自动滚到底部
+}
+
+// 关键修改2：打字机效果显示AI回复
+async function typeWriterEffect(element, text, speed = 30) {
+    let index = 0;
+    // 关键修改：把 DeepSeek AI 改成 研探
+    element.innerHTML = `<strong>研探：</strong>`;
+    
+    return new Promise((resolve) => {
+        const typingInterval = setInterval(() => {
+            if (index < text.length) {
+                element.innerHTML += text.charAt(index);
+                index++;
+                // 每次输入字符都滚动到底部
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            } else {
+                clearInterval(typingInterval);
+                resolve();
+            }
+        }, speed);
+    });
+}
+
+// 发送消息核心函数（调用后端接口）
+async function sendMsg() {
+    const userText = userInput.value.trim();
+    if (!userText) return; // 空消息不发送
+
+    // 显示用户消息
+    addUserMsg(userText);
+    userInput.value = '';
+    sendBtn.disabled = true;
+    sendBtn.innerHTML = "<span class='loading'></span> 加载中...";
+
+    try {
+        // 调用本地后端接口（关键！绕开跨域）
+        const res = await fetch('http://127.0.0.1:5000/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ question: userText })
+        });
+
+        const result = await res.json();
+        const aiMsg = document.createElement('div');
+        aiMsg.style = "margin: 8px 0; padding: 10px; background: #e8f4ff; border-radius: 6px; max-width: 80%; text-align: left;";
+        chatWindow.appendChild(aiMsg);
+        
+        if (result.error) {
+            // 显示错误信息（带打字机效果）
+            await typeWriterEffect(aiMsg, result.error);
+        } else {
+            // 显示AI回复（带打字机效果）
+            await typeWriterEffect(aiMsg, result.reply);
+        }
+    } catch (err) {
+        const errorMsg = document.createElement('div');
+        errorMsg.style = "margin: 8px 0; padding: 10px; background: #e8f4ff; border-radius: 6px; max-width: 80%; text-align: left;";
+        chatWindow.appendChild(errorMsg);
+        // 错误信息也使用「研探」前缀
+        await typeWriterEffect(errorMsg, `请求失败：${err.message}（请检查后端是否启动）`);
+    } finally {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = "发送";
+        // 最终滚动到底部
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+}
+
+// 绑定事件
+sendBtn.addEventListener('click', sendMsg);
+userInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMsg();
+});
+// 快捷指引按钮点击
+guideItems.forEach(item => {
+    item.addEventListener('click', () => {
+        userInput.value = item.dataset.question;
+        sendMsg();
+    });
+});
+</script>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>关于我们</h4>
+                <p>YExplorer研探海大研学网站，致力于分享更多精彩内容</p>
+            </div>
+            <div class="footer-section">
+                <h4>快速链接</h4>
+                <ul>
+                    <li><a href="/Yexplorer/map.html">地图指引</a></li>
+                    <li><a href="/Yexplorer/AI.html">AI助手</a></li>
+                    <li><a href="/Yexplorer/resources.html">相关资源</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 新核创研社 版权所有</p>
+        </div>
+    </footer>
+
+    <script src="/Yexplorer/js/main.js"></script>
+</body>
+</html>
