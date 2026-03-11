@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI助手 - 海大文旅</title>
+    <link rel="stylesheet" href="Yexplorer/css/style.css">
+    <link rel="stylesheet" href="Yexplorer/css/characters.css">
+    <style>
+        /* 地图容器样式：更圆润+尺寸缩小+居中，保留阴影质感 */
+        #amap-container {
+            width: 90%; /* 缩小宽度，非100%更协调 */
+            height: 500px; /* 高度从600px缩小到500px */
+            margin: 20px auto; /* 上下20px，左右自动居中 */
+            border-radius: 12px; /* 更圆润的边角（原8px，加大更美观） */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        /* 搜索栏样式：适配页面，与地图容器呼应 */
+        .amap-search-bar {
+            width: 90%;
+            margin: 0 auto 10px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .amap-search-bar input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+        .amap-search-bar input:focus {
+            border-color: #409eff;
+        }
+        .amap-search-bar button {
+            padding: 10px 20px;
+            background-color: #409eff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        .amap-search-bar button:hover {
+            background-color: #337ecc;
+        }
+        /* 景点标题样式：与角色介绍标题一致，居中显示 */
+        .scenic-title {
+            text-align: center;
+            margin: 40px 0 20px;
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+        }
+    </style>
+    <!-- 高德地图Web JS API（已带你的Key，无需修改） -->
+    <script type="text/javascript" src="https://webapi.amap.com/maps?v=2.0&key=0636801629c41ae27a342297a5a1a71b"></script>
+</head>
+<body>
+    <header>
+        <nav class="main-nav">
+            <div class="logo">
+                <img src="Yexplorer/images/logo.png" alt="中国海洋大学">
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="Yexplorer/index.html">首页</a></li>
+                <li><a href="Yexplorer/map.html" class="active">地图指引</a></li>
+                <li><a href="Yexplorer/AI.html">AI助手</a></li>
+                <li><a href="Yexplorer/resources.html">相关资源</a></li>
+                <li><a href="Yexplorer/contact.html">联系我们</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="characters-page">
+        <h1 class="page-title">地图指引</h1>
+        <!-- 地图搜索栏 -->
+        <div class="amap-search-bar">
+            <input type="text" id="search-input" placeholder="请输入地点搜索（如：中国海洋大学鱼山校区、图书馆）">
+            <button id="search-btn">搜索</button>
+        </div>
+        <!-- 高德地图容器 -->
+        <div id="amap-container"></div>
+
+        <!-- 著名景点介绍板块：完全参考角色介绍格式 -->
+        <h2 class="scenic-title">著名景点介绍</h2>
+        <div class="characters-grid">
+            <!-- 景点卡片1：鱼山校区校门 -->
+            <div class="character-card">
+                <div class="character-image">
+                    <img src="Yexplorer/images/jiaomen.jpg" alt="中国海洋大学鱼山校区校门">
+                </div>
+                <div class="character-info">
+                    <h2>鱼山校区校门</h2>
+                    <p class="character-title">校区标志性建筑</p>
+                    <p class="character-desc">鱼山校区正门为复古风格建筑，青瓦红柱，兼具历史底蕴与海洋特色，是校区的标志性入口。</p>
+                </div>
+            </div>
+
+            <!-- 景点卡片2：逸夫馆 -->
+            <div class="character-card">
+                <div class="character-image">
+                    <img src="Yexplorer/images/yifuguan.jpg" alt="逸夫馆">
+                </div>
+                <div class="character-info">
+                    <h2>逸夫馆</h2>
+                    <p class="character-title">核心教学科研楼</p>
+                    <p class="character-desc">逸夫馆是鱼山校区核心教学科研建筑，内设多个实验室与教室，是海洋科学相关专业的主要教学场所。</p>
+                </div>
+            </div>
+
+            <!-- 景点卡片3：海洋馆 -->
+            <div class="character-card">
+                <div class="character-image">
+                    <img src="Yexplorer/images/haiyangguan.jpg" alt="海洋馆">
+                </div>
+                <div class="character-info">
+                    <h2>海洋馆</h2>
+                    <p class="character-title">海洋生物科普基地</p>
+                    <p class="character-desc">馆内陈列各类海洋生物标本、模型，兼具教学与科普功能，是了解海洋知识的重要场所。</p>
+                </div>
+            </div>
+
+            <!-- 景点卡片4：校史馆 -->
+            <div class="character-card">
+                <div class="character-image">
+                    <img src="Yexplorer/images/xiaoshiguan.jpg" alt="校史馆">
+                </div>
+                <div class="character-info">
+                    <h2>校史馆</h2>
+                    <p class="character-title">校史文化展示窗口</p>
+                    <p class="character-desc">校史馆记录了中国海洋大学的发展历程，陈列大量历史照片、文献资料，展现百年海大的文化底蕴。</p>
+                </div>
+            </div>
+
+            <!-- 景点卡片5：鱼山花园 -->
+            <div class="character-card">
+                <div class="character-image">
+                    <img src="Yexplorer/images/yushanhuayuan.jpg" alt="鱼山花园">
+                </div>
+                <div class="character-info">
+                    <h2>鱼山花园</h2>
+                    <p class="character-title">校园休闲景观</p>
+                    <p class="character-desc">鱼山花园绿植繁茂，设有休闲步道与观景台，背靠鱼山，面朝大海，是校园内的天然休闲景观。</p>
+                </div>
+            </div>
+
+            <!-- 景点卡片6：图书馆 -->
+            <div class="character-card">
+                <div class="character-image">
+                    <img src="Yexplorer/images/tushuguan.jpg" alt="鱼山校区图书馆">
+                </div>
+                <div class="character-info">
+                    <h2>鱼山校区图书馆</h2>
+                    <p class="character-title">文献信息中心</p>
+                    <p class="character-desc">图书馆馆藏丰富，以海洋科学、水产养殖等专业文献为特色，是师生查阅资料、自习的重要场所。</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        		
+			<div class="footer-content">
+				<div class="footer-section">
+
+					<h4>关于我们</h4>
+					<p>YExplorer研探海大研学网站，致力于分享更多精彩内容</p>
+				</div>
+				<div class="footer-section">
+					<h4>快速链接</h4>
+					<ul>
+						<li><a href="Yexplorer/map.html">地图指引</a></li>
+						<li><a href="Yexplorer/AI.html">AI助手</a></li>
+						<li><a href="Yexplorer/resources.html">相关资源</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="footer-bottom">
+				<p>&copy; 2026 新核创研社 版权所有</p>
+			</div>
+	
+    </footer>
+
+    <script src="Yexplorer/js/main.js"></script>
+    <!-- 高德地图初始化+搜索功能+缩放限制脚本 -->
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. 初始化高德地图（定位鱼山校区+限制缩放级别，禁止调过大过小）
+            const map = new AMap.Map('amap-container', {
+                zoom: 17, // 鱼山校区适配缩放级别（校园级更精细）
+                center: [120.3028, 36.0615], // 中国海洋大学鱼山校区精准经纬度
+                resizeEnable: true,
+                zoomLimits: { // 核心：限制缩放范围，禁止调过大过小
+                    min: 15, // 最小缩放级别（避免拉太远）
+                    max: 18  // 最大缩放级别（避免放太大）
+                }
+            });
+
+            // 2. 添加地图常用控件（缩放、比例尺、地图类型切换）
+            map.addControl(new AMap.Scale()); // 比例尺
+            map.addControl(new AMap.Zoom({ position: 'rb' })); // 右下角缩放控件
+            map.addControl(new AMap.MapType({ // 普通/卫星地图切换
+                defaultType: 0,
+                showRoad: true
+            }));
+
+            // 3. 初始化鱼山校区中心点标记（默认显示，提升辨识度）
+            new AMap.Marker({
+                position: [120.3028, 36.0615],
+                title: '中国海洋大学鱼山校区',
+                map: map
+            });
+
+            // 4. 初始化地点搜索功能（高德原生PlaceSearch）
+            const placeSearch = new AMap.PlaceSearch({
+                map: map, // 搜索结果挂载到当前地图
+                pageSize: 10, // 每页搜索结果数量
+                autoFitView: true // 搜索成功后自动缩放地图到结果视野
+            });
+
+            // 5. 搜索按钮点击事件
+            document.getElementById('search-btn').addEventListener('click', function() {
+                const keyword = document.getElementById('search-input').value.trim();
+                if (keyword) {
+                    placeSearch.search(keyword); // 执行搜索
+                } else {
+                    alert('请输入要搜索的地点！'); // 空输入提示
+                }
+            });
+
+            // 6. 输入框回车触发搜索（提升体验）
+            document.getElementById('search-input').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    document.getElementById('search-btn').click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

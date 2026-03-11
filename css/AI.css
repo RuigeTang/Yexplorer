@@ -1,0 +1,182 @@
+/* 原有样式全部保留，仅在末尾添加/修改以下内容 */
+.story-page {
+    padding: 120px 5% 60px;
+    background-color: var(--bg-color);
+}
+
+.page-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: var(--primary-color);
+    text-shadow: 0 0 10px rgba(0, 255, 213, 0.3);
+}
+
+/* 时间线样式 */
+.timeline {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 0;
+}
+
+/* 关键修改1：隐藏原时间线的蓝色竖线 */
+.timeline::before {
+    /* 注释掉原有竖线样式，或直接设为display: none */
+    display: none;
+    /* 以下是原有代码，保留仅作对比，实际用display: none即可 */
+    /* content: '';
+    position: absolute;
+    width: 4px;
+    background: var(--gradient-1);
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 15px var(--primary-color); */
+}
+
+/* 关键修改2：重置timeline-item，让AI对话容器居中 */
+.timeline-item {
+    /* 覆盖原有width/left/padding，让容器占满并居中 */
+    padding: 10px 0;
+    position: static; /* 取消原有定位 */
+    width: 80%; /* 限制对话容器宽度，更美观 */
+    max-width: 800px; /* 最大宽度，适配大屏 */
+    margin: 0 auto 60px; /* 上下间距，左右自动居中 */
+}
+
+/* 取消原有奇偶项的定位差异（因为AI只有一个对话容器） */
+.timeline-item:nth-child(odd),
+.timeline-item:nth-child(even) {
+    left: 0;
+}
+
+.timeline-content {
+    padding: 20px;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 255, 213, 0.1);
+    border: 1px solid rgba(0, 255, 213, 0.1);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.timeline-content:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--neon-shadow);
+    border-color: rgba(0, 255, 213, 0.3);
+}
+
+/* 关键修改3：调整AI对话的标题位置（从右上角改为居中） */
+.timeline-date {
+    position: static; /* 取消绝对定位 */
+    display: inline-block; /* 行内块，适配居中 */
+    margin: 0 auto 20px; /* 上下间距，左右居中 */
+    background: var(--gradient-1);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    box-shadow: 0 0 15px rgba(0, 255, 213, 0.3);
+}
+
+/* 适配AI对话窗口的样式（覆盖原有图片容器样式） */
+.timeline-image {
+    margin: 15px 0;
+    border-radius: 10px;
+    overflow: hidden;
+    /* 新增：适配AI对话窗口的背景和高度 */
+    background: #f5f5f5;
+    padding: 20px;
+    min-height: 300px;
+    overflow-y: auto;
+}
+
+/* 隐藏原有图片样式（因为AI对话窗口没有图片） */
+.timeline-image img {
+    display: none;
+}
+
+.timeline-content h2 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(0, 255, 213, 0.3);
+    text-align: center; /* 让AI标题居中 */
+}
+
+.timeline-content p {
+    color: #cccccc;
+    margin-bottom: 15px;
+}
+
+.timeline-details {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 255, 213, 0.1);
+    /* 新增：让输入框区域flex布局更适配 */
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.timeline-details h3 {
+    color: var(--accent-color);
+    margin-bottom: 0; /* 取消底部间距，适配flex布局 */
+    text-shadow: 0 0 10px rgba(255, 0, 106, 0.3);
+    flex-shrink: 0; /* 防止标题被挤压 */
+}
+
+.timeline-details ul {
+    list-style: none;
+    padding-left: 20px;
+}
+
+.timeline-details li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 8px;
+    color: #cccccc;
+}
+
+.timeline-details li::before {
+    content: '•';
+    color: var(--accent-color);
+    position: absolute;
+    left: 0;
+    font-size: 1.5em;
+    line-height: 1;
+    text-shadow: 0 0 5px rgba(255, 0, 106, 0.3);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    /* 移除响应式的竖线样式（因为已经隐藏） */
+    .timeline::before {
+        left: 30px;
+        display: none;
+    }
+
+    /* 响应式下让AI对话容器依然居中 */
+    .timeline-item {
+        width: 95%; /* 小屏占满宽度 */
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .timeline-date {
+        left: auto;
+        right: auto;
+    }
+
+    /* 小屏下输入框区域适配 */
+    .timeline-details {
+        flex-wrap: wrap; /* 小屏下输入框换行 */
+    }
+
+    .timeline-details h3 {
+        width: 100%; /* 标题占满一行 */
+        margin-bottom: 10px;
+    }
+}

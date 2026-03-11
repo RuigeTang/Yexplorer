@@ -1,0 +1,84 @@
+.characters-page {
+    padding: 120px 5% 60px;
+    background-color: var(--bg-color);
+}
+
+.page-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: var(--primary-color);
+    text-shadow: 0 0 10px rgba(0, 255, 213, 0.3);
+}
+
+.characters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.character-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 255, 213, 0.1);
+    border: 1px solid rgba(0, 255, 213, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.character-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--neon-shadow);
+    border-color: rgba(0, 255, 213, 0.3);
+}
+
+.character-image {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+}
+
+.character-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.character-card:hover .character-image img {
+    transform: scale(1.1);
+}
+
+.character-info {
+    padding: 1.5rem;
+}
+
+.character-info h2 {
+    color: var(--primary-color);
+    text-shadow: 0 0 10px rgba(0, 255, 213, 0.3);
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.character-title {
+    color: var(--accent-color);
+    font-weight: bold;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 10px rgba(255, 0, 106, 0.3);
+}
+
+.character-desc {
+    color: #cccccc;
+    line-height: 1.6;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .characters-grid {
+        grid-template-columns: 1fr;
+        padding: 0 1rem;
+    }
+} 

@@ -1,0 +1,629 @@
+/* 全局样式：核心为中国海洋大学校色体系，适配研学主题 */
+:root {
+    --primary-color: #005EB8; /* 中国海洋大学主蓝（校色核心） */
+    --secondary-color: #4098D7; /* 海大浅蓝（辅助色） */
+    --accent-color: #6EC1E4; /* 海大浅青蓝（点缀色） */
+    --text-color: #333333; /* 主文字色（深灰，清晰易读） */
+    --light-text: #FFFFFF; /* 深色背景上的文字（白色） */
+    /* 直接把背景变量改成背景图片配置 - 核心修改 */
+    --bg-image: url('background.jpg'), /* 主背景图片（替换为你的实际路径） */
+                radial-gradient(circle at 20% 20%, rgba(64, 152, 215, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(110, 193, 228, 0.1) 0%, transparent 50%);
+    --bg-color: transparent; /* 改为透明，让背景图片显示 */
+    --nav-bg: rgba(0, 94, 184, 0.95); /* 导航栏背景（主蓝半透明） */
+    --card-bg: #FFFFFF; /* 卡片背景（纯白，突出内容） */
+    --gradient-1: linear-gradient(45deg, #005EB8, #4098D7); /* 海大蓝渐变 */
+    --gradient-2: linear-gradient(135deg, #4098D7, #6EC1E4); /* 浅蓝渐变 */
+    --card-shadow: 0 4px 12px rgba(0, 94, 184, 0.1); /* 卡片柔和阴影 */
+    --hover-shadow: 0 6px 16px rgba(0, 94, 184, 0.15); /* hover增强阴影 */
+    /* 新增遮罩变量，方便统一调整 */
+    --bg-mask: rgba(255, 255, 255, 0.8); /* 半透明白色遮罩 */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 全局背景样式 - 背景图片 + 半透明白色遮罩 */
+body {
+    font-family: 'Microsoft YaHei', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color); /* 深灰文字，明亮易读 */
+    
+    /* 使用变量加载背景图片 */
+    background-image: var(--bg-image);
+    background-size: cover; /* 覆盖整个视口 */
+    background-position: center; /* 居中显示 */
+    background-attachment: fixed; /* 固定背景，滚动时不移动 */
+    background-repeat: no-repeat; /* 不重复 */
+    background-color: var(--bg-color); /* 兜底背景色 */
+    
+    /* 基础布局设置 */
+    position: relative;
+    min-height: 100vh; /* 确保背景覆盖整个页面高度 */
+    z-index: 0;
+}
+
+/* 半透明白色遮罩层（全局） */
+body::before {
+    content: '';
+    position: fixed; /* 固定遮罩层，跟随视口 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-mask); /* 使用变量控制遮罩 */
+    z-index: -1; /* 放在内容下方，不遮挡任何元素 */
+    pointer-events: none; /* 不影响鼠标交互 */
+}
+
+/* 修复使用--bg-color的区域，让它们也透明显示背景图片 */
+.anime-intro, .video-preview {
+    background-color: transparent !important; /* 强制透明 */
+}
+
+/* 导航栏样式：海大主蓝底色，适配研学正式风格 */
+.main-nav {
+    background-color: var(--nav-bg);
+    backdrop-filter: blur(10px);
+    padding: 1rem 5%;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(64, 152, 215, 0.3); /* 浅蓝边框 */
+}
+
+.logo img {
+    height: 50px;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)); /* 适配白色logo阴影 */
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--light-text); /* 导航文字白色 */
+    font-weight: bold;
+    transition: all 0.3s ease;
+    position: relative;
+    padding: 0.5rem 1rem;
+}
+
+.nav-links a::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--gradient-1); /* 海大蓝渐变下划线 */
+    transition: width 0.3s ease;
+}
+
+.nav-links a:hover::before {
+    width: 100%;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: var(--accent-color); /* hover/激活态用浅青蓝 */
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+/* 英雄横幅区域样式：半透明白色遮罩，适配研学主题 */
+.hero-banner {
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    margin-top: 80px; /* 适配固定导航栏 */
+}
+
+.hero-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.1);
+    transition: transform 5s ease;
+}
+
+.hero-banner:hover img {
+    transform: scale(1);
+}
+
+.hero-overlay {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* 半透明白色遮罩，保留文字可读性且提亮背景，适配研学视觉 */
+    background: rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.hero-text {
+    max-width: 800px;
+    padding: 0 2rem;
+    color: var(--text-color); /* 适配白遮罩，改用深灰文字更清晰 */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 1s ease forwards;
+    animation-delay: 0.5s;
+}
+
+.hero-text h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); /* 白色文字阴影，提升辨识度 */
+}
+
+.hero-text p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 新闻区域样式：纯白卡片+海大蓝边框，适配研学简洁风格 */
+.latest-news {
+    padding: 4rem 5%;
+}
+
+.latest-news h2 {
+    color: var(--primary-color); /* 模块标题用海大主蓝 */
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.news-card {
+    position: relative;
+    background: var(--card-bg); /* 纯白卡片 */
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow); /* 柔和阴影 */
+    border: 1px solid rgba(0, 94, 184, 0.15); /* 浅蓝边框 */
+    transition: all 0.3s ease;
+}
+
+.news-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--hover-shadow); /* hover增强阴影 */
+    border-color: rgba(0, 94, 184, 0.3); /* 边框加深 */
+}
+
+.news-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+/* 动画简介区域：海大蓝标题，纯白卡片 */
+.anime-intro {
+    padding: 6rem 5%;
+}
+
+.intro-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.intro-text h2 {
+    color: var(--primary-color); /* 标题用海大主蓝 */
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.intro-text > p {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 3rem;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-color);
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.feature-item {
+    text-align: center;
+    padding: 2rem;
+    background: var(--card-bg); /* 纯白卡片 */
+    border-radius: 15px;
+    border: 1px solid rgba(0, 94, 184, 0.15); /* 浅蓝边框 */
+    transition: transform 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--card-shadow);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+    color: var(--primary-color); /* 图标用海大主蓝 */
+}
+
+.feature-item h3 {
+    color: var(--primary-color); /* 小标题用主蓝 */
+    margin-bottom: 1rem;
+}
+
+.feature-item p {
+    color: var(--text-color); /* 正文深灰 */
+}
+
+/* 视频预览区域：海大蓝标题，柔和阴影 */
+.video-preview {
+    padding: 6rem 5%;
+}
+
+.video-preview h2 {
+    text-align: center;
+    color: var(--primary-color); /* 标题用主蓝 */
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+.video-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 比例 */
+    height: 0;
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: var(--card-shadow); /* 柔和阴影 */
+    border: 1px solid rgba(0, 94, 184, 0.15); /* 浅蓝边框 */
+}
+
+.video-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.video-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.play-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 94, 184, 0.3); /* 海大蓝半透明遮罩 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+}
+
+.play-overlay:hover {
+    background: rgba(0, 94, 184, 0.5); /* hover加深遮罩 */
+}
+
+.play-button {
+    width: 80px;
+    height: 80px;
+    background: var(--primary-color); /* 播放按钮主蓝 */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.play-button span {
+    color: var(--light-text); /* 播放图标白色 */
+    font-size: 2rem;
+    margin-left: 5px;
+}
+
+.video-placeholder:hover .play-button {
+    transform: scale(1.1);
+}
+
+.video-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.video-frame video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: black;
+}
+
+.video-description {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.video-description h3 {
+    color: var(--primary-color); /* 视频标题主蓝 */
+    margin-bottom: 0.5rem;
+}
+
+/* 新闻卡片内容样式 */
+.news-content {
+    padding: 1.5rem;
+}
+
+.news-content h3 {
+    color: var(--primary-color); /* 新闻标题主蓝 */
+    margin-bottom: 0.5rem;
+}
+
+.news-content p {
+    color: var(--text-color); /* 新闻正文深灰 */
+}
+
+.news-date {
+    display: block;
+    color: var(--secondary-color); /* 日期用浅蓝 */
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+.news-more {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.more-btn {
+    display: inline-block;
+    background: var(--gradient-1); /* 渐变按钮 */
+    color: var(--light-text); /* 按钮文字白色 */
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.more-btn:hover {
+    background: var(--primary-color); /* hover变主蓝 */
+    transform: translateY(-3px);
+    box-shadow: var(--card-shadow);
+}
+
+/* 英雄区域按钮：海大蓝渐变 */
+.hero-btn {
+    display: inline-block;
+    background: var(--gradient-1); /* 主蓝渐变 */
+    color: var(--light-text);
+    padding: 1rem 2rem;
+    border-radius: 30px;
+    text-decoration: none;
+    margin-top: 2rem;
+    transition: transform 0.3s ease, background 0.3s ease;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.hero-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-2); /* 浅蓝渐变 */
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.3s ease;
+}
+
+.hero-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--card-shadow);
+}
+
+.hero-btn:hover::before {
+    opacity: 1;
+}
+
+/* 页脚样式：海大深蓝底色，白色文字 */
+footer {
+    background-color: #003A70; /* 海大深蓝（校色辅助） */
+    backdrop-filter: blur(10px);
+    color: var(--light-text); /* 页脚文字白色 */
+    padding: 3rem 5% 1rem;
+    border-top: 1px solid rgba(64, 152, 215, 0.3); /* 浅蓝边框 */
+    box-shadow: 0 -5px 15px rgba(0, 94, 184, 0.1);
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.footer-section h4 {
+    color: var(--accent-color); /* 页脚标题用浅青蓝 */
+    margin-bottom: 1rem;
+}
+
+.footer-section ul {
+    list-style: none;
+}
+
+.footer-section a {
+    color: #E0E9F2; /* 页脚链接浅灰蓝 */
+    text-decoration: none;
+    display: block;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.footer-section a:hover {
+    color: var(--accent-color); /* hover变浅青蓝 */
+    transform: translateX(5px);
+}
+
+.footer-bottom {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(64, 152, 215, 0.2);
+    text-align: center;
+}
+
+.footer-bottom p {
+    color: #E0E9F2; /* 版权文字浅灰蓝 */
+    font-size: 0.9rem;
+}
+
+/* 汉堡菜单按钮：适配海大蓝 */
+.hamburger {
+    display: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border: 2px solid var(--light-text); /* 白色边框 */
+    border-radius: 5px;
+    background: rgba(0, 94, 184, 0.2); /* 主蓝半透明背景 */
+    transition: all 0.3s ease;
+}
+
+.hamburger span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: var(--light-text); /* 白色横线 */
+    margin: 5px 0;
+    transition: all 0.3s ease;
+}
+
+.hamburger:hover {
+    background: rgba(0, 94, 184, 0.4); /* hover加深背景 */
+}
+
+/* 汉堡菜单激活状态 */
+.hamburger.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* 移动端响应式调整 */
+@media (max-width: 768px) {
+    .hamburger {
+        display: block;
+        z-index: 1001;
+    }
+
+    .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 100%;
+        height: 100vh;
+        background: var(--nav-bg); /* 导航弹窗主蓝 */
+        backdrop-filter: blur(10px);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: 0.3s ease;
+        border-left: 1px solid rgba(64, 152, 215, 0.3);
+    }
+
+    .nav-links.active {
+        right: 0;
+    }
+
+    .nav-links li {
+        margin: 1.5rem 0;
+        opacity: 0;
+        transform: translateX(50px);
+        transition: all 0.3s ease;
+    }
+
+    .nav-links.active li {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .nav-links.active li:nth-child(1) { transition-delay: 0.2s; }
+    .nav-links.active li:nth-child(2) { transition-delay: 0.3s; }
+    .nav-links.active li:nth-child(3) { transition-delay: 0.4s; }
+    .nav-links.active li:nth-child(4) { transition-delay: 0.5s; }
+    .nav-links.active li:nth-child(5) { transition-delay: 0.6s; }
+
+    .hero-text h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-text p {
+        font-size: 1rem;
+    }
+
+    .features {
+        grid-template-columns: 1fr;
+    }
+
+    .video-container {
+        padding: 0 1rem;
+    }
+}
